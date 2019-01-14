@@ -8,6 +8,8 @@ DOM=example.com
 PASSWORD=abc123
 RAM=8096
 CPU=2
+SLEEP=30
+SSH_OPT="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 if [[ ! -e /var/lib/libvirt/images/rhel-guest-image-8.0-1690.x86_64.qcow2 ]]; then
     echo "Download the RHEL8 beta to /var/lib/libvirt/images/"
@@ -70,13 +72,20 @@ sudo virt-install --name $NAME \
   --vnc \
   --rng /dev/urandom
 
+echo "Waiting $SLEEP seconds for VM to come online"
+sleep $SLEEP
+
 echo "Identifying IP address for new VM"
 IPADDR=$(sudo virsh net-dhcp-leases default | grep $(sudo virsh dumpxml $NAME | awk '/mac address/' | awk -F "'" 'NR==1{print $2}') | awk '{match($0,/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/); ip = substr($0,RSTART,RLENGTH); print ip}')
 echo $IPADDR
 
 if [[ ! -z $IPADDR ]]; then
    echo "Setting hostname"
-   ssh root@$IPADDR "uname -a"
-   ssh root@$IPADDR "hostnamectl set-hostname $NAME.$DOM"
-   ssh root@$IPADDR "hostnamectl set-hostname $NAME.$DOM --transient"
+   ssh $SSH_OPT root@$IPADDR "hostnamectl set-hostname $NAME.$DOM"
+   ssh $SSH_OPT root@$IPADDR "hostnamectl set-hostname $NAME.$DOM --transient"
+   ssh $SSH_OPT root@$IPADDR "uname -a"
+   echo "The following is ready:"
+   echo "$IPADDR       $NAME"
+else
+    echo "Could not find IP address for $NAME"
 fi
