@@ -60,7 +60,7 @@ sudo virt-install --name $NAME \
   --disk path=/var/lib/libvirt/images/$NAME.qcow2,device=disk,bus=virtio,format=qcow2,cache=unsafe \
   --boot hd \
   --network network:default \
-  --network network:default \
+  --network network:ctlplane \
   --virt-type kvm \
   --cpu host-passthrough \
   --ram $RAM \
