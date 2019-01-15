@@ -30,6 +30,9 @@ for F in `ls /etc/yum.repos.d/trunk*`; do
 done
 
 echo "Install fake docker"
+if [[ ! -d blobs ]]; then
+    ln -s ~/standalone-blobs/ blobs
+fi
 if [[ -e blobs/docker-2.0.0-1.noarch.rpm ]]; then
     sudo dnf install -y blobs/docker*.rpm
 else
@@ -38,14 +41,9 @@ else
 fi
 
 echo "Install tripleo"
-sudo dnf install -y python3-tripleoclient ansible
+sudo dnf install -y python3-tripleoclient
 
 echo "Patch puppet"
 
 sudo sed -i 's/:operatingsystemmajrelease => "7"/:operatingsystemmajrelease => ["7","8"]/' /usr/share/ruby/vendor_ruby/puppet/provider/service/systemd.rb
 sudo sed -i '/defaultfor :operatingsystem => :fedora/a \ \ defaultfor :osfamily => :redhat, :operatingsystemmajrelease => "8"' /usr/share/ruby/vendor_ruby/puppet/provider/package/dnf.rb
-
-echo "build container.yaml (depends on python2 for now)"
-openstack tripleo container image prepare default \
-          --output-env-file $HOME/containers-prepare-parameters.yaml
-
