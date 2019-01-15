@@ -46,13 +46,17 @@ export LIBGUESTFS_BACKEND=direct
 # copy olddisk to newdisk, extending one of the guest's partitions to fill
 sudo virt-resize --expand /dev/sda3 /var/lib/libvirt/images/rhel-guest-image-8.0-1690.x86_64.qcow2 /var/lib/libvirt/images/$NAME.qcow2
 
-sudo virt-customize -a /var/lib/libvirt/images/$NAME.qcow2 --root-password password:$PASSWORD --selinux-relabel
-sudo virt-customize -a /var/lib/libvirt/images/$NAME.qcow2 --selinux-relabel --run-command 'yum remove -y cloud-init'
+sudo chown $USER:$USER /var/lib/libvirt/images/$NAME.qcow2
+ls -l /var/lib/libvirt/images/$NAME.qcow2
+
+virt-customize -v -a /var/lib/libvirt/images/$NAME.qcow2 --root-password password:$PASSWORD --selinux-relabel
+
+virt-customize -a /var/lib/libvirt/images/$NAME.qcow2 --selinux-relabel --run-command 'yum remove -y cloud-init'
 
 if [[ -e blobs/ssh_public_key ]]; then
     # curl https://github.com/fultonj.keys > blobs/ssh_public_key
     KEY=$(cat blobs/ssh_public_key)
-    sudo virt-customize -a /var/lib/libvirt/images/$NAME.qcow2 --selinux-relabel --run-command "mkdir /root/.ssh/; chmod 700 /root/.ssh/; echo $KEY > /root/.ssh/authorized_keys; chmod 600 /root/.ssh/authorized_keys;"
+    virt-customize -a /var/lib/libvirt/images/$NAME.qcow2 --selinux-relabel --run-command "mkdir /root/.ssh/; chmod 700 /root/.ssh/; echo $KEY > /root/.ssh/authorized_keys; chmod 600 /root/.ssh/authorized_keys;"
 fi
 
 echo "Installing virtual machine"
