@@ -2,7 +2,7 @@
 - hosts: rhel8
   vars:
     ansible_python_interpreter: /usr/bin/python3
-    ssh_git_checkout: 0
+    ssh_git_checkout: 1
     tht_review: ""
   tasks:
     - name: install convenience packages
@@ -83,3 +83,9 @@
     - name: execute git_clone.sh on remote servers (not doing ssh_git_checkout)
       shell: "bash /home/stack/git_clone.sh"
       when: "{{ ssh_git_checkout }} == 0"
+    - name: upload standalone blobs
+      synchronize:
+        mode: push
+        dest: /home/stack/standalone-blobs/
+        src:  /home/fultonj/rhel8/standalone/blobs/
+      tags: sync
