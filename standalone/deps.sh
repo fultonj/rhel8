@@ -11,15 +11,6 @@ if [[ $(sudo getenforce) -eq "Enforcing" ]]; then
     sudo setenforce 0
 fi
 
-echo "Set priority for /etc/yum.repos.d/download* "
-for F in `ls /etc/yum.repos.d/download*`; do
-    echo "gpgcheck=0" | tee -a $F;
-    echo "priority=10" | tee -a $F;
-done
-
-echo "Install python3"
-sudo dnf install @python36:3.6/default
-
 echo "Install lvm2 ruby fonts"
 dnf install -y ruby liberation-sans-fonts lvm2
 
