@@ -12,7 +12,7 @@ if [[ $(sudo getenforce) -eq "Enforcing" ]]; then
 fi
 
 echo "Install lvm2 ruby fonts"
-dnf install -y ruby liberation-sans-fonts lvm2
+sudo dnf install -y ruby liberation-sans-fonts lvm2
 
 echo "use network-scripts to manage ens4"
 sudo nmcli dev set ens4 managed no
