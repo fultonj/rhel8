@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 if [[ $# -eq 0 ]]; then
-    echo "USAGE: $0 [IP of the host where you install python3"
+    echo "USAGE: $0 [IP of the host where you install python3]"
     exit 1
 fi
 IP=$1
