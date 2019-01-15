@@ -5,9 +5,9 @@ if [[ $# -eq 0 ]]; then
 fi
 NAME=$1
 DOM=example.com
-PASSWORD=abc123
-RAM=8096
-CPU=2
+PASSWORD=redhat
+RAM=16384
+CPU=16
 SLEEP=30
 SSH_OPT="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
@@ -38,13 +38,13 @@ fi
 echo "Creating and customizing image"
 sudo qemu-img create -f qcow2  /var/lib/libvirt/images/$NAME.qcow2 100G
 
-export LIBGUESTFS_DEBUG=1
-export LIBGUESTFS_TRACE=1
+#export LIBGUESTFS_DEBUG=1
+#export LIBGUESTFS_TRACE=1
 export LIBGUESTFS_PATH=/tmp/appliance
 export LIBGUESTFS_BACKEND=direct
 
 # copy olddisk to newdisk, extending one of the guest's partitions to fill
-sudo virt-resize --expand /dev/sda3 /var/lib/libvirt/images/rhel-guest-image-8.0-1690.x86_64.qcow2 /var/lib/libvirt/images/$NAME.qcow2
+sudo -E bash -c "virt-resize --expand /dev/sda3 /var/lib/libvirt/images/rhel-guest-image-8.0-1690.x86_64.qcow2 /var/lib/libvirt/images/$NAME.qcow2"
 
 sudo chown $USER:$USER /var/lib/libvirt/images/$NAME.qcow2
 ls -l /var/lib/libvirt/images/$NAME.qcow2
