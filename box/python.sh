@@ -14,7 +14,7 @@ for F in `ls /etc/yum.repos.d/download*`; do
 done
 
 echo "Install python3"
-dnf module enable python36
+dnf module enable -y python36
 dnf module install -y python36:3.6/common
 EOF
 
