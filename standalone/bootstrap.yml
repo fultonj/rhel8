@@ -1,0 +1,85 @@
+---
+- hosts: rhel8
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ssh_git_checkout: 0
+    tht_review: ""
+  tasks:
+    - name: install convenience packages
+      become: true
+      dnf:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - tmux
+        - emacs-nox
+        - vim
+        - git
+        - gdisk
+    - name: write new ens4 config
+      become: true
+      copy:
+        dest: /etc/sysconfig/network-scripts/ifcfg-ens4
+        force: true
+        content: |
+          DEVICE=ens4
+          BOOTPROTO=static
+          ONBOOT=yes
+          TYPE=Ethernet
+          IPADDR={{ item.ip4 }}
+          PREFIX={{ item.prefix }}
+      when: "'{{ inventory_hostname }}' == '{{ item.host }}'"
+      with_items:
+        - { host: 'fultonj', ip4: '192.168.24.2', prefix: '24' }
+    - name: bring up ens4
+      become: true      
+      command: "ifup ens4"
+    - name: update /etc/hosts
+      become: true
+      copy:
+        dest: /etc/hosts
+        force: yes
+        group: root
+        owner: root
+        mode: 0644
+        content: |
+          127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+          ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+          192.168.24.2    fultonj.example.com        fultonj
+    - name: copy git clone shell script
+      copy:
+        dest: /home/stack/git_clone.sh
+        force: yes
+        group: stack
+        owner: stack
+        mode: 0755
+        content: |
+          export SSH_GIT_CHECKOUT={{ ssh_git_checkout }}
+          if [[ $SSH_GIT_CHECKOUT -eq 1 ]]; then
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            git clone git@github.com:/fultonj/oooq.git
+            git clone git@github.com:/fultonj/rhel8.git
+            ln -s oooq/git-init.sh
+            bash git-init.sh
+          else
+            git clone https://github.com/fultonj/rhel8.git
+            export THT_REVIEW={{ tht_review }}
+            if [[ ! -z $THT_REVIEW ]]; then
+              echo "Downloading unmerged archive of THT review"
+              mkdir templates
+              pushd templates
+              curl $THT_REVIEW > templates.tar.gz
+              tar xf templates.tar.gz
+              rm -f templates.tar.gz
+              popd
+            else
+              git clone https://github.com/openstack/tripleo-heat-templates.git
+              ln -s tripleo-heat-templates templates
+            fi
+          fi
+          if [[ ! -e 0_bootstrap.sh ]]; then
+            ln -s rhel8/standalone/bootstrap.sh 0_bootstrap.sh
+          fi
+    - name: execute git_clone.sh on remote servers (not doing ssh_git_checkout)
+      shell: "bash /home/stack/git_clone.sh"
+      when: "{{ ssh_git_checkout }} == 0"

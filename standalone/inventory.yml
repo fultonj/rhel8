@@ -1,0 +1,3 @@
+---
+[rhel8]
+fultonj ansible_user=stack
