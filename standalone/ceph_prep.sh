@@ -29,6 +29,6 @@ echo "installing python-notario"
 # https://cbs.centos.org/koji/buildinfo?buildID=23004
 # sudo dnf install -y https://cbs.centos.org/kojifiles/packages/python-notario/0.0.14/1.el7/noarch/python2-notario-0.0.14-1.el7.noarch.rpm
 curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
-sudo python get-pip.py
+sudo python3 get-pip.py
 sudo /usr/local/bin/pip install notario
 sudo ln -s /usr/local/lib/python3.6/site-packages/notario /usr/lib/python3.6/site-packages/notario
