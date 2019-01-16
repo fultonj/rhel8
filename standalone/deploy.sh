@@ -50,14 +50,18 @@ parameter_defaults:
   PythonInterpreter: /usr/bin/python3
 EOF
 
+if [[ ! -d ~/templates ]]; then
+    ln -s /usr/share/openstack-tripleo-heat-templates ~/templates
+fi
 
 sudo openstack tripleo deploy \
---templates \
---local-ip=$IP/$NETMASK \
--e /usr/share/openstack-tripleo-heat-templates/environments/standalone/standalone-tripleo.yaml \
--r /usr/share/openstack-tripleo-heat-templates/roles/Standalone.yaml \
--e $HOME/containers-prepare-parameters.yaml \
--e $HOME/standalone_parameters.yaml \
---output-dir $HOME \
---standalone
-
+     --templates \
+     --local-ip=$IP/$NETMASK \
+     -e $HOME/templates/environments/standalone/standalone-tripleo.yaml \
+     -r $HOME/templates/roles/Standalone.yaml \
+     -e $HOME/templates/environments/ceph-ansible/ceph-ansible.yaml \
+     -e $HOME/containers-prepare-parameters.yaml \
+     -e $HOME/standalone_parameters.yaml \
+     -e $HOME/rhel8/standalone/ceph.yaml \
+     --output-dir $HOME \
+     --standalone
