@@ -1,7 +1,7 @@
 parameter_defaults:
   CephAnsibleDisksConfig:
     devices:
-      - /dev/loop3
+      - /dev/vdb
   LocalCephAnsibleFetchDirectoryBackup: /home/stack/ceph_ansible_fetch
   CephPoolDefaultPgNum: 32
   CephPoolDefaultSize: 1
