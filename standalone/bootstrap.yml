@@ -82,6 +82,9 @@
           if [[ ! -e 0_bootstrap.sh ]]; then
             ln -s rhel8/standalone/bootstrap.sh 0_bootstrap.sh
           fi
+          if [[ ! -e 1_deploy.sh ]]; then
+            ln -s rhel8/standalone/deploy.sh 1_deploy.sh
+          fi
     - name: execute git_clone.sh on remote servers (not doing ssh_git_checkout)
       shell: "bash /home/stack/git_clone.sh"
       when: "{{ ssh_git_checkout }} == 0"
