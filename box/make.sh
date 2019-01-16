@@ -4,6 +4,7 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 NAME=$1
+EXTRA=1
 DOM=example.com
 PASSWORD=redhat
 RAM=16384
@@ -92,4 +93,10 @@ if [[ ! -z $IPADDR ]]; then
    echo "$IPADDR       $NAME"
 else
     echo "Could not find IP address for $NAME"
+fi
+
+if [[ $EXTRA -eq 1 ]]; then
+    bash register.sh $IPADDR
+    bash python.sh $IPADDR
+    bash stack.sh $IPADDR
 fi
