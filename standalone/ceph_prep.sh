@@ -37,3 +37,4 @@ echo "installing python-notario"
 curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
 sudo python get-pip.py
 sudo /usr/local/bin/pip install notario
+sudo ln -s /usr/local/lib/python3.6/site-packages/notario /usr/lib/python3.6/site-packages/notario
