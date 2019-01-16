@@ -29,7 +29,7 @@ for F in `ls /etc/yum.repos.d/trunk*`; do
     echo "priority=20" | sudo tee -a $F;
 done
 
-echo "Install fake docker"
+echo "Install fake docker and older ansible"
 if [[ ! -d blobs ]]; then
     ln -s ~/standalone-blobs/ blobs
 fi
@@ -37,6 +37,13 @@ if [[ -e blobs/docker-2.0.0-1.noarch.rpm ]]; then
     sudo dnf install -y blobs/docker*.rpm
 else
     echo "blobs/docker-2.0.0-1.noarch.rpm is missing"
+    exit 1
+fi
+# workaround https://bugs.launchpad.net/tripleo/+bug/1811875
+if [[ -e blobs/ansible-2.7.1-1.noarch.rpm ]]; then
+    sudo dnf install -y blobs/ansible-2.7.1-1.noarch.rpm
+else
+    echo "blobs/ansible-2.7.1-1.noarch.rpm is missing"
     exit 1
 fi
 
