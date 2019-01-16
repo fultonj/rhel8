@@ -51,11 +51,15 @@ parameter_defaults:
 EOF
 
 if [[ ! -d ~/templates ]]; then
-    ln -s /usr/share/openstack-tripleo-heat-templates ~/templates
+    if [[ ! -d ~/tripleo-heat-templates ]]; then
+	ln -s /usr/share/openstack-tripleo-heat-templates ~/templates
+    else
+	ln -s ~/tripleo-heat-templates ~/templates
+    fi
 fi
 
 sudo openstack tripleo deploy \
-     --templates \
+     --templates $HOME/templates/ \
      --local-ip=$IP/$NETMASK \
      -e $HOME/templates/environments/standalone/standalone-tripleo.yaml \
      -r $HOME/templates/roles/Standalone.yaml \
