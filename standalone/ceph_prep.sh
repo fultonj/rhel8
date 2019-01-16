@@ -29,3 +29,11 @@ else
 fi
 popd
 sudo ln -s /home/stack/ceph-ansible /usr/share/ceph-ansible
+
+echo "installing python-notario"
+# I cannot install from CBS because I need python3 notario
+# https://cbs.centos.org/koji/buildinfo?buildID=23004
+# sudo dnf install -y https://cbs.centos.org/kojifiles/packages/python-notario/0.0.14/1.el7/noarch/python2-notario-0.0.14-1.el7.noarch.rpm
+curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+sudo python get-pip.py
+sudo /usr/local/bin/pip install notario
