@@ -16,6 +16,7 @@
         - vim
         - git
         - gdisk
+        - https://www.rpmfind.net/linux/fedora/linux/releases/28/Everything/x86_64/os/Packages/e/emacs-yaml-mode-0.0.13-4.fc28.noarch.rpm
     - name: write new ens4 config
       become: true
       copy:
