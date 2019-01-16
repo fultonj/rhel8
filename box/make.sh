@@ -84,11 +84,16 @@ echo "Identifying IP address for new VM"
 IPADDR=$(sudo virsh net-dhcp-leases default | grep $(sudo virsh dumpxml $NAME | awk '/mac address/' | awk -F "'" 'NR==1{print $2}') | awk '{match($0,/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/); ip = substr($0,RSTART,RLENGTH); print ip}')
 echo $IPADDR
 
+# create extra disk
+sudo dd if=/dev/zero of=/var/lib/ceph-osd.img bs=1 count=0 seek=7G
+sudo virsh attach-disk $NAME /var/lib/ceph-osd.img vdb --persistent
+
 if [[ ! -z $IPADDR ]]; then
    echo "Setting hostname"
    ssh $SSH_OPT root@$IPADDR "hostnamectl set-hostname $NAME.$DOM"
    ssh $SSH_OPT root@$IPADDR "hostnamectl set-hostname $NAME.$DOM --transient"
    ssh $SSH_OPT root@$IPADDR "uname -a"
+   ssh $SSH_OPT root@$IPADDR "lsblk"
    echo "The following is ready:"
    echo "$IPADDR       $NAME"
 else
