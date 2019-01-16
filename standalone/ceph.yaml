@@ -5,6 +5,7 @@ parameter_defaults:
   LocalCephAnsibleFetchDirectoryBackup: /home/stack/ceph_ansible_fetch
   CephPoolDefaultPgNum: 32
   CephPoolDefaultSize: 1
+  CephAnsiblePlaybookVerbosity: 4
   CephAnsibleExtraConfig:
     osd_scenario: lvm
     osd_objectstore: bluestore
