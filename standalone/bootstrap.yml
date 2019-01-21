@@ -32,7 +32,7 @@
           PREFIX={{ item.prefix }}
       when: "'{{ inventory_hostname }}' == '{{ item.host }}'"
       with_items:
-        - { host: 'fultonj', ip4: '192.168.24.2', prefix: '24' }
+        - { host: 'rhel8', ip4: '192.168.24.2', prefix: '24' }
     - name: bring up ens4
       become: true      
       command: "ifup ens4"
@@ -47,7 +47,7 @@
         content: |
           127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
           ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-          192.168.24.2    fultonj.example.com        fultonj
+          192.168.24.2    rhel8.example.com        rhel8
     - name: copy git clone shell script
       copy:
         dest: /home/stack/git_clone.sh
