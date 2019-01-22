@@ -18,13 +18,11 @@ resource_registry:
 parameter_defaults:
   CloudName: $IP
   ControlPlaneStaticRoutes: []
-  NtpServer: ["clock.redhat.com","clock2.redhat.com"]
   Debug: true
   DeploymentUser: $USER
   DnsServers:
-    - 10.19.43.29
-    - 10.11.5.19
-    - 10.5.30.160
+    - 8.8.4.4
+    - 8.8.8.8
   DockerInsecureRegistryAddress:
     - $IP:8787
   NeutronPublicInterface: $INTERFACE
