@@ -82,7 +82,13 @@ sleep $SLEEP
 
 echo "Identifying IP address for new VM"
 IPADDR=$(sudo virsh net-dhcp-leases default | grep $(sudo virsh dumpxml $NAME | awk '/mac address/' | awk -F "'" 'NR==1{print $2}') | awk '{match($0,/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/); ip = substr($0,RSTART,RLENGTH); print ip}')
-echo $IPADDR
+
+if [[ $IPADDR =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+    echo "$IPADDR is the IP address of $NAME"
+else
+    echo "$IPADDR is not a valid IP address"
+    exit 1
+fi
 
 # create extra disk
 sudo dd if=/dev/zero of=/var/lib/ceph-osd.img bs=1 count=0 seek=7G
