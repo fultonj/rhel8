@@ -11,3 +11,4 @@ parameter_defaults:
     osd_objectstore: bluestore
     cluster_network: 192.168.24.0/24
     public_network: 192.168.24.0/24
+    docker_pull_timeout: '0'
