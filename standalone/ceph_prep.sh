@@ -17,9 +17,9 @@ fi
 echo "installing latest ceph-ansible from git and symlinking it to /usr/share"
 pushd ~
 if [[ $SSH_GIT_CHECKOUT -eq 1 ]]; then
-    git clone --single-branch --branch guits-podman git@github.com:/fultonj/ceph-ansible.git
+    git clone git@github.com:/ceph/ceph-ansible.git
 else
-    git clone --single-branch --branch guits-podman https://github.com/fultonj/ceph-ansible.git
+    git clone https://github.com/ceph/ceph-ansible.git
 fi
 popd
 sudo ln -s /home/stack/ceph-ansible /usr/share/ceph-ansible
