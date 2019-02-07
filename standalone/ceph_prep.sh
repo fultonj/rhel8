@@ -8,8 +8,12 @@ if [[ ! -e /dev/vdb ]]; then
     echo "error: /dev/vdb does not exist"
     exit 1
 fi
-sgdisk -Z /dev/vdb
+# ensure /dev/vdb is clean
+sudo dmsetup remove $(sudo dmsetup ls | grep ceph | awk {'print $1'})
+sudo dd if=/dev/zero of=/dev/vdb bs=1M count=1000
+sudo sgdisk -Z /dev/vdb
 sudo lsblk
+
 if [[ ! -d $FETCH ]]; then
     mkdir $FETCH
 fi
