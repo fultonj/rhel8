@@ -4,6 +4,7 @@
     ansible_python_interpreter: /usr/bin/python3
     ssh_git_checkout: 1
     tht_review: "631198"
+    faker: https://raw.githubusercontent.com/lhh/faker/master/faker
   tasks:
     - name: install convenience packages
       become: true
@@ -16,8 +17,12 @@
         - vim
         - git
         - gdisk
+        - rpm-build
         - https://www.rpmfind.net/linux/fedora/linux/releases/28/Everything/x86_64/os/Packages/e/emacs-yaml-mode-0.0.13-4.fc28.noarch.rpm
         - http://dl.fedoraproject.org/pub/fedora/linux/releases/28/Everything/x86_64/os/Packages/g/git-review-1.25.0-9.fc28.noarch.rpm
+    - name: fake rubypick installation
+      become: true
+      command: "curl -o /tmp/faker {{ faker }}; bash /tmp/faker rubypick-1.1.1-8.haha ; rm -f /tmp/faker"
     - name: write new ens4 config
       become: true
       copy:
