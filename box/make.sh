@@ -8,7 +8,7 @@ EXTRA=1
 DOM=example.com
 PASSWORD=redhat
 RAM=16384
-CPU=16
+CPU=8
 SLEEP=30
 SSH_OPT="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
