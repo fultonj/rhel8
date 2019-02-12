@@ -90,6 +90,12 @@ else
     exit 1
 fi
 
+# update /etc/hosts
+sudo sed -i "/$NAME/d" /etc/hosts
+sudo sh -c "echo $IPADDR    $NAME.$DOM        $NAME >> /etc/hosts"
+echo "$NAME added to /etc/hosts"
+grep -n $NAME /etc/hosts
+
 # create extra disk
 sudo dd if=/dev/zero of=/var/lib/ceph-osd.img bs=1 count=0 seek=7G
 sudo virsh attach-disk $NAME /var/lib/ceph-osd.img vdb --persistent
