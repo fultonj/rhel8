@@ -12,4 +12,4 @@ parameter_defaults:
     cluster_network: 192.168.24.0/24
     public_network: 192.168.24.0/24
     docker_pull_timeout: '0'
-    ceph_uid: 64045
+    ceph_uid: 167
