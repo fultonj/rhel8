@@ -17,6 +17,7 @@
         - git
         - gdisk
         - rpm-build
+        - https://cbs.centos.org/kojifiles/packages/runc/1.0.0/60.dev.git2abd837.el7/x86_64/runc-1.0.0-60.dev.git2abd837.el7.x86_64.rpm
         - https://www.rpmfind.net/linux/fedora/linux/releases/28/Everything/x86_64/os/Packages/e/emacs-yaml-mode-0.0.13-4.fc28.noarch.rpm
         - http://dl.fedoraproject.org/pub/fedora/linux/releases/28/Everything/x86_64/os/Packages/g/git-review-1.25.0-9.fc28.noarch.rpm
     - name: Install faker script
