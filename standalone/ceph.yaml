@@ -7,6 +7,12 @@ parameter_defaults:
         db_vg: vg1
         wal: wal-lv1
         wal_vg: vg1
+      - data: data-lv2
+        data_vg: vg2
+        db: db-lv2
+        db_vg: vg2
+        wal: wal-lv2
+        wal_vg: vg2
     # ^ if user chooses not to use ceph-volume batch mode, pass pre-created LVM
     #   https://bit.ly/2N5tlr9
     #devices:

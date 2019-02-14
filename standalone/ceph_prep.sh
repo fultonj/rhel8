@@ -3,6 +3,7 @@
 export SSH_GIT_CHECKOUT=0
 export FETCH=/home/stack/ceph_ansible_fetch
 export BATCH=0
+export EXTRA_BLOCK=1
 
 echo "confirm we have block device and create fetch directory"
 if [[ ! -e /dev/vdb ]]; then
@@ -18,11 +19,21 @@ sudo lsblk
 if [[ $BATCH -eq 0 ]]; then
     # if user chooses not to use ceph-volume batch mode create LVM for them
     # https://bit.ly/2N5tlr9
-    pvcreate /dev/vdb
-    vgcreate vg1 /dev/vdb
-    lvcreate -n data-lv1 -l 597 vg1
-    lvcreate -n db-lv1 -l 597 vg1
-    lvcreate -n wal-lv1 -l 597 vg1
+    sudo pvcreate /dev/vdb
+    sudo vgcreate vg1 /dev/vdb
+    sudo lvcreate -n data-lv1 -l 597 vg1
+    sudo lvcreate -n db-lv1 -l 597 vg1
+    sudo lvcreate -n wal-lv1 -l 597 vg1
+fi
+
+if [[ $EXTRA_BLOCK -eq 1 ]]; then
+    sudo dd if=/dev/zero of=/var/lib/ceph-osd.img bs=1 count=0 seek=7G
+    sudo losetup /dev/loop3 /var/lib/ceph-osd.img
+    sudo pvcreate /dev/loop3
+    sudo vgcreate vg2 /dev/loop3
+    sudo lvcreate -n data-lv2 -l 597 vg2
+    sudo lvcreate -n db-lv2 -l 597 vg2
+    sudo lvcreate -n wal-lv2 -l 597 vg2
 fi
 
 if [[ ! -d $FETCH ]]; then
