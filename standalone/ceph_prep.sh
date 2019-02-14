@@ -2,6 +2,7 @@
 
 export SSH_GIT_CHECKOUT=0
 export FETCH=/home/stack/ceph_ansible_fetch
+export BATCH=0
 
 echo "confirm we have block device and create fetch directory"
 if [[ ! -e /dev/vdb ]]; then
@@ -14,10 +15,19 @@ sudo dd if=/dev/zero of=/dev/vdb bs=1M count=1000
 sudo sgdisk -Z /dev/vdb
 sudo lsblk
 
+if [[ $BATCH -eq 0 ]]; then
+    # if user chooses not to use ceph-volume batch mode create LVM for them
+    # https://bit.ly/2N5tlr9
+    pvcreate /dev/vdb
+    vgcreate vg1 /dev/vdb
+    lvcreate -n data-lv1 -l 597 vg1
+    lvcreate -n db-lv1 -l 597 vg1
+    lvcreate -n wal-lv1 -l 597 vg1
+fi
+
 if [[ ! -d $FETCH ]]; then
     mkdir $FETCH
 fi
-
 
 echo "installing latest ceph-ansible from git and symlinking it to /usr/share"
 

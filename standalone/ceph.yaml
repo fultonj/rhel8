@@ -1,7 +1,16 @@
 parameter_defaults:
   CephAnsibleDisksConfig:
-    devices:
-      - /dev/vdb
+    lvm_volumes:
+      - data: data-lv1
+        data_vg: vg1
+        db: db-lv1
+        db_vg: vg1
+        wal: wal-lv1
+        wal_vg: vg1
+    # ^ if user chooses not to use ceph-volume batch mode, pass pre-created LVM
+    #   https://bit.ly/2N5tlr9
+    #devices:
+    #  - /dev/vdb
   LocalCephAnsibleFetchDirectoryBackup: /home/stack/ceph_ansible_fetch
   CephPoolDefaultPgNum: 32
   CephPoolDefaultSize: 1
