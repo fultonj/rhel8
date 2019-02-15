@@ -10,7 +10,7 @@
     ceph_logical_volume_wal: ceph_lv_wal
     ceph_logical_volume_db: ceph_lv_db
     ceph_logical_volume_data: ceph_lv_data
-    branches: stable/master
+    ci_branch: master
   tasks:
     - name: install convenience packages
       become: true
@@ -146,5 +146,5 @@
         lvcreate -n {{ ceph_logical_volume_db }} -l 375 {{ ceph_logical_volume_group }}
         lvcreate -n {{ ceph_logical_volume_data }} -l 1041 {{ ceph_logical_volume_group }}
         lvs
-      when: branches is match("^(?!stable/(newton|ocata|pike|queens|rocky)).*$")
+      when: ci_branch is not match('(newton|ocata|pike|queens|rocky)')
       tags: lvm
