@@ -4,6 +4,13 @@
     ansible_python_interpreter: /usr/bin/python3
     ssh_git_checkout: 1
     tht_review: "631198"
+    ceph_loop_device: /dev/loop3
+    ceph_loop_device_file: /var/lib/ceph-osd.img
+    ceph_logical_volume_group: ceph_vg
+    ceph_logical_volume_wal: ceph_lv_wal
+    ceph_logical_volume_db: ceph_lv_db
+    ceph_logical_volume_data: ceph_lv_data
+    branches: stable/master
   tasks:
     - name: install convenience packages
       become: true
@@ -111,3 +118,33 @@
         dest: /home/stack/standalone-blobs/
         src:  /home/fultonj/rhel8/standalone/blobs/
       tags: sync
+    - name: stat ceph_loop_device see if it already exists
+      stat:
+        path: "{{ ceph_loop_device }}"
+      register: dev_loop3_res
+    - name: log to syslog if ceph_loop_device exists
+      syslogger:
+        msg: "boostrap-subnodes - warning {{ ceph_loop_device }} already exists"
+      when: dev_loop3_res.stat.exists
+    - name: Make sure we have losetup and lvm2 installed/latest
+      package:
+        name: [util-linux, lvm2]
+        state: latest
+    - name: Use dd and losetup to create the loop device
+      become: true
+      shell: |
+        dd if=/dev/zero of={{ ceph_loop_device_file }} bs=1 count=0 seek=7G
+        losetup {{ ceph_loop_device }} {{ ceph_loop_device_file }}
+        lsblk
+      tags: dd
+    - name: Use {pv,vg,lv}create to create logical volumes on loop device
+      become: true
+      shell: |
+        pvcreate {{ ceph_loop_device }}
+        vgcreate {{ ceph_logical_volume_group }} {{ ceph_loop_device }}
+        lvcreate -n {{ ceph_logical_volume_wal }} -l 375 {{ ceph_logical_volume_group }}
+        lvcreate -n {{ ceph_logical_volume_db }} -l 375 {{ ceph_logical_volume_group }}
+        lvcreate -n {{ ceph_logical_volume_data }} -l 1041 {{ ceph_logical_volume_group }}
+        lvs
+      when: branches is match("^(?!stable/(newton|ocata|pike|queens|rocky)).*$")
+      tags: lvm
