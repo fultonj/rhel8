@@ -3,17 +3,6 @@
 export SSH_GIT_CHECKOUT=0
 export FETCH=/home/stack/ceph_ansible_fetch
 
-echo "confirm we have block device and create fetch directory"
-if [[ ! -e /dev/vdb ]]; then
-    echo "error: /dev/vdb does not exist"
-    exit 1
-fi
-# ensure /dev/vdb is clean
-sudo dmsetup remove $(sudo dmsetup ls | grep ceph | awk {'print $1'})
-sudo dd if=/dev/zero of=/dev/vdb bs=1M count=1000
-sudo sgdisk -Z /dev/vdb
-sudo lsblk
-
 if [[ ! -d $FETCH ]]; then
     mkdir $FETCH
 fi
