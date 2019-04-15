@@ -10,11 +10,30 @@ bash setup_ansible.sh
 ansible-playbook-3 debug.yml --tags getconf
 ls *.conf
 sed -i '/null/d' *.conf
+echo "[mon]" >> server-ceph.conf
+echo "        debug mon = 20" >> server-ceph.conf
+echo "        debug auth = 5" >> server-ceph.conf
 ansible-playbook-3 debug.yml --tags pushconf,restart
 ```
 
 - Set up ansible
 - Download the conf files
-- Remove all ines with null
+- Remove all lines with null
   - When /dev/null is deleted from the ceph.conf it will log to /var/log/ceph
+- Increase logging numbers for monitors
 - Upload the conf files and restart the relevant containers
+
+### Debug containers themselves
+
+Does Ceph Mon see any attempts to connect?
+```
+podman exec -ti ceph-mon-overcloud-controller-0 /bin/bash
+tail -f /var/log/ceph/*.log
+```
+
+Try to connect from the Nova libvirt container
+```
+podman exec -ti nova_libvirt /bin/bash
+rbd -c /etc/ceph/ceph.conf --keyring /etc/ceph/ceph.client.openstack.keyring -p vms ls -l
+```
+
