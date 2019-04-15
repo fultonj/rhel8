@@ -1,0 +1,79 @@
+---
+- name: getconf mons
+  hosts: mons
+  gather_facts: no
+  become: true
+  vars:
+    pwd: /home/stack/rhel8/ceph
+  tasks:
+  - name: get ceph.conf
+    synchronize:
+      mode: pull
+      src: /etc/ceph/ceph.conf
+      dest: "{{ pwd }}/server-ceph.conf"
+    tags:
+      - getconf
+- name: getconf clients
+  hosts: clients
+  gather_facts: no
+  become: true
+  vars:
+    pwd: /home/stack/rhel8/ceph
+  tasks:
+  - name: get ceph.conf
+    synchronize:
+      mode: pull
+      src: /etc/ceph/ceph.conf
+      dest: "{{ pwd }}/client-ceph.conf"
+    tags:
+      - getconf
+
+- name: pushconf mons
+  hosts: mons
+  gather_facts: no
+  become: true
+  vars:
+    pwd: /home/stack/rhel8/ceph
+  tasks:
+  - name: push ceph.conf
+    synchronize:
+      mode: push
+      dest: /etc/ceph/ceph.conf
+      src: "{{ pwd }}/server-ceph.conf"
+    tags:
+      - pushconf
+- name: pushconf clients
+  hosts: clients
+  gather_facts: no
+  become: true
+  vars:
+    pwd: /home/stack/rhel8/ceph
+  tasks:
+  - name: push ceph.conf
+    synchronize:
+      mode: push
+      src: "{{ pwd }}/client-ceph.conf"      
+      dest: /etc/ceph/ceph.conf
+    tags:
+      - pushconf
+      
+- name: restart mons
+  hosts: mons
+  gather_facts: no
+  become: true
+  tasks:
+  - name: restart ceph mon and mgr containers
+    shell: for C in ceph-mon ceph-mgr; do echo $C ; systemctl status $C@* ; systemctl restart $C@* ; systemctl status $C@*;  done
+    tags:
+      - restart
+    
+- name: restart clients
+  hosts: clients
+  gather_facts: no
+  become: true
+  tasks:
+  - name: restart compute containers
+    shell: systemctl status tripleo_nova_libvirt ; systemctl restart tripleo_nova_libvirt ; systemctl status tripleo_nova_libvirt ; podman ps -a --sync ;
+    tags:
+      - restart
+    
