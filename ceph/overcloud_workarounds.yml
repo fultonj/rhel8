@@ -1,0 +1,14 @@
+---
+- name: overcloud workarounds
+  hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+  - name: disable healthchecks
+    shell: for i in $(ls /etc/systemd/system/*healthcheck*); do echo $i; systemctl disable --now $(basename $i); done
+    tags:
+      - healthcheck
+  - name: enable iptables and network on restart
+    shell: systemctl enable iptables network
+    tags:
+      - network
